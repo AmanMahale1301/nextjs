@@ -1,30 +1,33 @@
 // /pages/utility/shopifyApi.js
-
+const gql = String.raw;
 export const fetchProductData = async (productString) => {
   const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
   const shop = process.env.NEXT_PUBLIC_SHOPIFY_STORE;
   console.log(productString);
 
-  const query = `{product(id: "${productString}") {
-    id
-    handle
-    title
-    description
-    variants(first: 1) {
-      edges {
-        node {
-          id
-          title
-          price{
-            amount
+  const query = gql`{
+    product(id: "${productString}") {
+      title
+      description
+      variants(first: 5) {
+        edges {
+          node {
+            id
+            title
+            price {
+              amount
+            }
           }
         }
       }
+      featuredImage {
+        src
+      }
+      metafield(key: "extraInfo", namespace: "custom") {
+        value
+      }
     }
-    featuredImage {
-      src
-    }
-  }}
+  }
   `;
   console.log(query);
   try {

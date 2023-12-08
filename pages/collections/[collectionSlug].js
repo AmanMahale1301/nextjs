@@ -49,7 +49,7 @@ const Collections = () => {
       <div className="flex justify-start w-full mt-5">
         <h1 className="font-bold text-xl mb-2 ">{collectionSlug} </h1>
       </div>
-      <div className="container my-5 flex">
+      <div className="container my-5 flex flex-wrap justify-center">
         {products.map((product) => (
           <>
             <div

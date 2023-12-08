@@ -170,3 +170,6 @@
 }
 
 
+.active {
+  @apply border-4 border-slate-900;
+}

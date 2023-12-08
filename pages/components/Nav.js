@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../public/images/logo.svg";
 import Link from "next/link";
+import cartLogo from "../../utils/cart.gif";
 import Image from "next/image";
 import { signIn, signOut, getProviders, useSession } from "next-auth/react";
-import { createCheckout } from "../utility/cart";
+import { createCart } from "../utility/cart";
 import { useRouter } from "next/router";
 import CartDrawer from "./CartDrawer";
 const Nav = () => {
@@ -11,6 +12,7 @@ const Nav = () => {
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     const setProvider = async () => {
       const response = await getProviders();
@@ -19,8 +21,8 @@ const Nav = () => {
       const storedCartId = localStorage.getItem("cartId");
 
       if (!storedCartId) {
-        const checkout = await createCheckout();
-        const newCartId = checkout.data.cartCreate.cart.id;
+        const cart = await createCart();
+        const newCartId = cart.data.cartCreate.cart.id;
         localStorage.setItem("cartId", newCartId);
       }
       localStorage.setItem("userEmail", email);
@@ -60,7 +62,7 @@ const Nav = () => {
               >
                 Sign Out
               </button>
-              <CartDrawer />
+
               <Link href="/profile">
                 <Image
                   src={session?.user?.image}
@@ -70,6 +72,11 @@ const Nav = () => {
                   alt="profile"
                 />
               </Link>
+              <div>
+                <button onClick={() => setOpen(true)}>
+                  <Image src={cartLogo} width={35} height={35} alt="Cart" />
+                </button>
+              </div>
             </div>
           ) : (
             <>
@@ -143,6 +150,7 @@ const Nav = () => {
           )}
         </div>
       </nav>
+      <CartDrawer isDrawerOpen={open} setIsDrawerOpen={setOpen} />
     </>
   );
 };
