@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchShopifyData } from "../utility";
+import { fetchShopifyData } from "../../utility";
 import Image from "next/image";
 import { useRouter } from "next/router";
 

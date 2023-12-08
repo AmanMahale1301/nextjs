@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchShopifyData } from "../utility";
+import { fetchShopifyData } from "../../utility";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -80,34 +80,30 @@ const Collection = (category) => {
       </div>
       <div className="container my-5 flex">
         {products.map((product) => (
-          <>
-            <div
-              className="max-w-sm rounded my-4 mx-5 w-64"
-              key={product.node.id}
-              style={{ border: " 1px solid black" }}
-              onClick={() => handleProductClick(product.node.id)}
-            >
-              <Image
-                src={product.node.featuredImage.src}
-                alt=""
-                className="w-full h-48"
-                width={100}
-                height={60}
-              />
-              <div className="px-6 py-4">
-                <div className="font-bold text-xl mb-2">
-                  {product.node.title}
-                </div>
-                <p className="text-gray-700 text-base truncate">
-                  {product.node.description}
-                </p>
-                <p className="text-gray-800 font-medium text-base ">
-                  {product.node.variants.edges[0].node.price.currencyCode}{" "}
-                  {product.node.variants.edges[0].node.price.amount}
-                </p>
-              </div>
+          <div
+            className="max-w-sm rounded my-4 mx-5 w-64"
+            key={product.node.id}
+            style={{ border: " 1px solid black" }}
+            onClick={() => handleProductClick(product.node.id)}
+          >
+            <Image
+              src={product.node.featuredImage.src}
+              alt=""
+              className="w-full h-48"
+              width={100}
+              height={60}
+            />
+            <div className="px-6 py-4">
+              <div className="font-bold text-xl mb-2">{product.node.title}</div>
+              <p className="text-gray-700 text-base truncate">
+                {product.node.description}
+              </p>
+              <p className="text-gray-800 font-medium text-base ">
+                {product.node.variants.edges[0].node.price.currencyCode}{" "}
+                {product.node.variants.edges[0].node.price.amount}
+              </p>
             </div>
-          </>
+          </div>
         ))}
       </div>
     </>

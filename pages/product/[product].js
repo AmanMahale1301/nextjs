@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { fetchProductData } from "../utility/product";
-import { createCart, addToCart, fetchCartItems } from "../utility/cart";
+import { fetchProductData } from "../../utility/product";
+import { createCart, addToCart, fetchCartItems } from "../../utility/cart";
 import CartDrawer from "../components/CartDrawer";
 
 const SingleProduct = () => {
@@ -22,7 +22,6 @@ const SingleProduct = () => {
     const fetchData = async () => {
       try {
         const productData = await fetchProductData(productId);
-        // console.log(productData);
         setProduct(productData);
         setData(productData.variants.edges);
       } catch (error) {

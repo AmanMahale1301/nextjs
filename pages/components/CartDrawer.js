@@ -6,7 +6,7 @@ import {
   createCheckout,
   addToCheckout,
   createCart,
-} from "../utility/cart";
+} from "../../utility/cart";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";

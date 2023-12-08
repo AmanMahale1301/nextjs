@@ -4,7 +4,7 @@ import Link from "next/link";
 import cartLogo from "../../utils/cart.gif";
 import Image from "next/image";
 import { signIn, signOut, getProviders, useSession } from "next-auth/react";
-import { createCart } from "../utility/cart";
+import { createCart } from "../../utility/cart";
 import { useRouter } from "next/router";
 import CartDrawer from "./CartDrawer";
 const Nav = () => {
