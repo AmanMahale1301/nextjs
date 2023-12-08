@@ -63,15 +63,15 @@ const Nav = () => {
                 Sign Out
               </button>
 
-              <Link href="/profile">
-                <Image
-                  src={session?.user?.image}
-                  width={37}
-                  height={37}
-                  className="rounded-full"
-                  alt="profile"
-                />
-              </Link>
+              {/* <Link href="/profile"> */}
+              <Image
+                src={session?.user?.image}
+                width={37}
+                height={37}
+                className="rounded-full"
+                alt="profile"
+              />
+              {/* </Link> */}
               <div>
                 <button onClick={() => setOpen(true)}>
                   <Image src={cartLogo} width={35} height={35} alt="Cart" />
@@ -110,18 +110,11 @@ const Nav = () => {
               {toggleDropdown && (
                 <div className="dropdown">
                   <Link
-                    href="/profile"
+                    href="/products"
                     className="dropdown_link"
                     onClick={() => setToggleDropdown(false)}
                   >
-                    My Profile
-                  </Link>
-                  <Link
-                    href="/profile"
-                    className="dropdown_link"
-                    onClick={() => setToggleDropdown(false)}
-                  >
-                    Create Prompt
+                    All Products
                   </Link>
                   <button
                     type="button"
@@ -129,6 +122,10 @@ const Nav = () => {
                     className="mt-5 w-full black_btn"
                   >
                     Sign Out
+                  </button>
+
+                  <button onClick={() => setOpen(true)}>
+                    <Image src={cartLogo} width={35} height={35} alt="Cart" />
                   </button>
                 </div>
               )}
