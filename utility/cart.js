@@ -210,6 +210,7 @@ export const fetchCartItems = async (cartId) => {
                     }
                     title
                   }
+                  title
                 }
               }
               quantity

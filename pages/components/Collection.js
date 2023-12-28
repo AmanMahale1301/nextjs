@@ -78,7 +78,7 @@ const Collection = (category) => {
           {category.category}{" "}
         </h1>
       </div>
-      <div className="container my-5 flex">
+      <div className="container my-5 flex w-full overflow-x-auto">
         {products.map((product) => (
           <div
             className="max-w-sm rounded my-4 mx-5 w-64"

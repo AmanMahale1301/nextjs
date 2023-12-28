@@ -1,4 +1,3 @@
-// /pages/utility/shopifyApi.js
 const gql = String.raw;
 export const fetchProductData = async (productString) => {
   const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
@@ -9,7 +8,7 @@ export const fetchProductData = async (productString) => {
     product(id: "${productString}") {
       title
       description
-      variants(first: 5) {
+      variants(first: 50) {
         edges {
           node {
             id
@@ -17,6 +16,10 @@ export const fetchProductData = async (productString) => {
             price {
               amount
             }
+            selectedOptions {
+          name
+          value
+        }
           }
         }
       }

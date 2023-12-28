@@ -16,14 +16,16 @@ const Nav = () => {
   useEffect(() => {
     const setProvider = async () => {
       const response = await getProviders();
-      // console.log(response, "test");
       const email = session?.user?.email;
-      const storedCartId = localStorage.getItem("cartId");
+      const cartId = sessionStorage.getItem("cartId");
 
-      if (!storedCartId) {
+      console.log(cartId);
+
+      if (!cartId) {
         const cart = await createCart();
-        const newCartId = cart.data.cartCreate.cart.id;
-        localStorage.setItem("cartId", newCartId);
+        const newCartId = cart;
+        console.log(cart, "test");
+        sessionStorage.setItem("cartId", newCartId);
       }
       localStorage.setItem("userEmail", email);
       setProviders(response);

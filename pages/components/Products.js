@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
-  const limit = 25;
+  const [limit, setLimit] = useState(10);
   const router = useRouter();
   const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 

@@ -22,6 +22,7 @@ const SingleProduct = () => {
     const fetchData = async () => {
       try {
         const productData = await fetchProductData(productId);
+        // console.log(productData);
         setProduct(productData);
         setData(productData.variants.edges);
       } catch (error) {
@@ -30,7 +31,7 @@ const SingleProduct = () => {
     };
     fetchData();
   }, [token, shop, productId]);
-
+  // console.log(data);
   const handleQuantityChange = (event) => {
     const newQuantity = Math.max(1, parseInt(event.target.value, 10) || 1);
     setQuantity(newQuantity);
@@ -38,13 +39,12 @@ const SingleProduct = () => {
 
   const handleAddToCart = async () => {
     try {
-      let cartId = localStorage.getItem("cartId");
+      let cartId = sessionStorage.getItem("cartId");
       console.log(cartId);
       if (!cartId) {
         cartId = await createCart();
-        localStorage.setItem("cartId", cartId);
+        sessionStorage.setItem("cartId", cartId);
       }
-
       const variantId = variant;
       console.log(variantId);
       const response = await addToCart(cartId, variantId, quantity);
@@ -64,24 +64,51 @@ const SingleProduct = () => {
       setQuantity((prevQuantity) => prevQuantity - 1);
     }
   };
-  const handleVariantClick = (id) => {
-    setSelected(id);
-    setVariant(id);
+
+  const [selectedOptions, setSelectedOptions] = useState({});
+  const categories = Array.from(
+    new Set(
+      data.flatMap((variant) =>
+        variant.node.selectedOptions.map((opt) => opt.name)
+      )
+    )
+  );
+
+  const handleOptionChange = (category, value, variantId) => {
+    setSelectedOptions((prevOptions) => ({
+      ...prevOptions,
+      [category]: { value },
+    }));
+    console.log(selectedOptions);
+
+    const matchingVariant = data.find((variant) =>
+      variant.node.selectedOptions.every(
+        (opt) =>
+          selectedOptions[opt.name]?.value === opt.value ||
+          (opt.name === category && opt.value === value)
+      )
+    );
+    console.log(matchingVariant);
+    if (matchingVariant) {
+      setVariant(matchingVariant.node.id);
+      console.log(matchingVariant.node.id);
+    }
   };
+  console.log(variant);
   return (
     <div className="">
       {product && (
         <div>
-          <div className="flex" style={{ width: "58rem" }}>
-            <div className="w-2/4">
+          <div className="flex flex-wrap">
+            <div className="max-[525px]:w-full">
               <Image
                 src={product?.featuredImage?.src}
-                width={100}
-                height={100}
-                className="w-full"
+                width={300}
+                height={300}
+                className="w-full flex"
               />
             </div>
-            <div className="w-2/3">
+            <div className="min-[768px]:w-[35vw] max-[440px]:py-4">
               <h1 className="text-gray-800 ms-8 font-bold text-5xl">
                 {product.title}
               </h1>
@@ -110,23 +137,82 @@ const SingleProduct = () => {
                 </button>
               </div>
               <div className="variants ms-9 mt-4">
-                {console.log(data)}
-                {data.map((variant) => (
-                  <>
-                    <button
-                      className={`btn border-2 border-gray-400 rounded me-3 px-3 py-1 ${
-                        selected === variant.node.id ? "active" : " "
-                      }`}
-                      key={variant.node.id}
-                      onClick={() => handleVariantClick(variant.node.id)}
-                    >
-                      {variant.node.title}
-                    </button>
-                  </>
-                ))}
+                {categories.map((category) => {
+                  const valuesInCategory = data
+                    .flatMap((variant) => variant.node.selectedOptions)
+                    .filter((option) => option.name === category)
+                    .map((option) => ({
+                      value: option.value,
+                      variantId: data.find((variant) =>
+                        variant.node.selectedOptions.some(
+                          (opt) =>
+                            opt.name === category && opt.value === option.value
+                        )
+                      ).node.id,
+                    }));
+
+                  const uniqueValues = valuesInCategory.filter(
+                    (value, index, self) =>
+                      self.findIndex((v) => v.value === value.value) === index
+                  );
+                  return (
+                    <div key={category} className="">
+                      {category === "Color" ? (
+                        <div className="mt-3">
+                          <p className="font-semibold ">{category}</p>
+                          {uniqueValues.map((option) => (
+                            <button
+                              key={option.value}
+                              onClick={() =>
+                                handleOptionChange(
+                                  category,
+                                  option.value,
+                                  option.variantId
+                                )
+                              }
+                              className={`color-${
+                                option.value
+                              } btn border-2 border-gray-400 rounded me-3 p-3 px-3 py-1 ${
+                                selectedOptions[category]?.value ===
+                                option.value
+                                  ? "active"
+                                  : ""
+                              }`}
+                              style={{ padding: "3%" }}
+                            ></button>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="mt-3">
+                          <p className="font-semibold">{category}</p>
+                          {uniqueValues.map((option) => (
+                            <button
+                              key={option.value}
+                              onClick={() =>
+                                handleOptionChange(
+                                  category,
+                                  option.value,
+                                  option.variantId
+                                )
+                              }
+                              className={`btn border-2 border-gray-400 rounded me-3 px-3 py-1 ${
+                                selectedOptions[category]?.value ===
+                                option.value
+                                  ? "active"
+                                  : ""
+                              }`}
+                            >
+                              {option.value}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               <button
-                className="flex items-center h-12 mt-5 text-white justify-center w-full rounded-lg bg-slate-400 mx-8"
+                className="flex-center h-12 mt-5 text-white justify-center w-full rounded-lg bg-slate-400 "
                 onClick={handleAddToCart}
               >
                 Add to Cart

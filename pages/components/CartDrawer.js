@@ -17,7 +17,7 @@ const CartDrawer = ({ isDrawerOpen, setIsDrawerOpen }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const cartId = localStorage?.getItem("cartId");
+    const cartId = sessionStorage?.getItem("cartId");
     console.log("test");
     const fetchCartData = async () => {
       try {
@@ -109,7 +109,10 @@ const CartDrawer = ({ isDrawerOpen, setIsDrawerOpen }) => {
                 <button onClick={() => setIsDrawerOpen(false)}>X</button>
               </span>
             </div>
-            <ul className="w-full  px-10 mt-11">
+            <ul
+              className="w-full  px-10 mt-11"
+              style={{ overflowY: "scroll", height: "29rem" }}
+            >
               {product.map((cart) => (
                 <li key={cart.node.merchandise.id}>
                   <div className=" border-2  rounded-sm border-grey-800 my-4 flex">
@@ -125,7 +128,12 @@ const CartDrawer = ({ isDrawerOpen, setIsDrawerOpen }) => {
                     <div className="flex w-full">
                       <div className="w-2/3 justify-start ps-3 ">
                         <div className="font-semibold mt-1">
-                          <span>{cart.node.merchandise.product.title}</span>
+                          <span>
+                            {cart.node.merchandise.product.title}
+                            <span className="ms-1 font-light">
+                              ({cart.node.merchandise.title})
+                            </span>
+                          </span>
                         </div>
                         <div className="font-semibold mt-3">
                           <div className="mt-5 ms-9 flex justify-start">

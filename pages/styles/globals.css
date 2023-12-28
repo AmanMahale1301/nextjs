@@ -16,6 +16,10 @@
   justify-content: center;
   padding: 120px 24px 160px 24px;
   pointer-events: none;
+  --scroll-size: 5px;
+  --scroll-radius: 10px;
+  --scroll-track: rgb(255 255 255 / 10%);
+  --scroll-thumb-color: #fff;
 }
 
 .main:before {
@@ -171,5 +175,33 @@
 
 
 .active {
-  @apply border-4 border-slate-900;
+  @apply border-2 border-slate-700;
+}
+
+.color-Black{
+  @apply bg-black
+}
+
+.color-Red{
+  @apply bg-red-600
+}
+
+.color-Blue{
+  @apply bg-blue-600
+}
+
+.color-Orange{
+  @apply bg-orange-600
+}
+
+.color-Green{
+  @apply bg-green-600
+}
+
+.color-Gold{
+  @apply bg-[#d3bc3b]
+}
+
+.color-Silver{
+  @apply bg-[#C0C0C0]
 }
