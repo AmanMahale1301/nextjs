@@ -17,9 +17,13 @@ const CartDrawer = ({ isDrawerOpen, setIsDrawerOpen }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const cartId = localStorage?.getItem("cartId");
-    console.log(cartId);
     const fetchCartData = async () => {
+      let cartId = localStorage.getItem("cartId");
+      console.log(cartId);
+      if (!cartId) {
+        cartId = await createCart();
+        localStorage.setItem("cartId", cartId);
+      }
       try {
         if (isDrawerOpen) {
           console.log(cartId);

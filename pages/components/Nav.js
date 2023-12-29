@@ -14,7 +14,6 @@ import {
   recoverCustomer,
 } from "@/utility/customer";
 import { createCart } from "@/utility/cart";
-import { signIn } from "next-auth/react";
 
 const Nav = () => {
   const [toggleDropdown, setToggleDropdown] = useState(false);
@@ -74,8 +73,10 @@ const Nav = () => {
 
   const handleSignIn = async () => {
     try {
+      if (!loginUser.email || !loginUser.password) {
+        return toast.error("Fill all required fields");
+      }
       const loggedUser = { ...loginUser };
-
       const response = await loginCustomer(loggedUser);
       localStorage.setItem("userEmail", loginUser.email);
       localStorage.setItem("accessToken", response);
@@ -92,10 +93,24 @@ const Nav = () => {
   const handleSignOut = async () => {
     setToggleDropdown(false);
     setLoggedIn(false);
+    setUser({
+      acceptsMarketing: true,
+      email: "",
+      firstName: "",
+      lastName: "",
+      password: "",
+      phone: "",
+    });
+    setLoginUser({
+      email: "",
+      password: "",
+    });
+    setRecoverUser({
+      email: "",
+    });
     localStorage.removeItem("accessToken");
-  };
-  const toggleForm = () => {
-    setIsSignIn(!isSignIn);
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("cartId");
   };
 
   const handleInputChange = (e) => {
@@ -116,6 +131,15 @@ const Nav = () => {
   };
 
   const handleSignUp = async () => {
+    if (
+      !user.email ||
+      !user.password ||
+      !user.phone ||
+      !user.firstName ||
+      !user.lastName
+    ) {
+      return toast.error("Fill all required fields");
+    }
     try {
       const newUser = { ...user };
       if (selectedCountry) {
@@ -151,6 +175,9 @@ const Nav = () => {
     }
   }, [selectedCountry]);
   const handleRecover = async () => {
+    if (!recoverUser.email) {
+      return toast.error("Fill all required fields");
+    }
     try {
       const userEmail = recoverUser.email;
       const response = await recoverCustomer(userEmail);
@@ -360,7 +387,7 @@ const Nav = () => {
                   <a
                     href="#"
                     className="underline font-semibold"
-                    onClick={toggleForm}
+                    onClick={() => setIsSignIn("signUp")}
                   >
                     Sign Up{" "}
                   </a>

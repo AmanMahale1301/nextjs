@@ -54,27 +54,34 @@ const Product = () => {
   };
   return (
     <>
-      <div className="flex justify-end items-center w-full">
-        <div className="mb-4 px-4">
-          <label className="mr-2 text-lg">Limit:</label>
-          <select value={limit} onChange={handleLimitChange} className="p-2">
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-          </select>
-        </div>
-        <div className="mb-4  w-1/4 flex-center ">
-          <label className="mr-2">Sort :</label>
-          <select
-            value={sortKey}
-            onChange={handleSortKeyChange}
-            className="p-2 "
-          >
-            <option value="BEST_SELLING">Best Selling</option>
-            <option value="PRICE">Price</option>
-            <option value="RELEVANCE">Relevance</option>
-          </select>
+      <div className=" flex w-full">
+        <div className="min-[769px]:w-4/6 "></div>
+        <div className="w-2/6 max-[768px]:w-full flex justify-between items-center mx-4">
+          <div className="mb-4 px-4">
+            <label className="mr-2 text-lg">Limit:</label>
+            <select
+              value={limit}
+              onChange={handleLimitChange}
+              className="p-2 border border-gray-800 rounded"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
+          <div className="mb-4   ">
+            <label className="mr-2">Sort :</label>
+            <select
+              value={sortKey}
+              onChange={handleSortKeyChange}
+              className="p-2 border border-gray-800 rounded"
+            >
+              <option value="BEST_SELLING">Best Selling</option>
+              <option value="PRICE">Price</option>
+              <option value="RELEVANCE">Relevance</option>
+            </select>
+          </div>
         </div>
       </div>
       <div className="flex flex-wrap justify-center">
