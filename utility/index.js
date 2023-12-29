@@ -1,5 +1,3 @@
-// /pages/utility/shopifyApi.js
-
 export const fetchShopifyData = async (query) => {
   const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
   const shop = process.env.NEXT_PUBLIC_SHOPIFY_STORE;
@@ -17,6 +15,6 @@ export const fetchShopifyData = async (query) => {
     return data.data.products.edges;
   } catch (error) {
     console.error("Error fetching data:", error);
-    throw error; // Rethrow the error to be handled by the component
+    throw error; 
   }
 };

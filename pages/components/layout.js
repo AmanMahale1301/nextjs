@@ -2,8 +2,7 @@ import { Inter } from "next/font/google";
 import Meta from "./meta";
 import Provider from "./Provider";
 import Nav from "./Nav";
-// import Button from "antd";
-const inter = Inter({ subsets: ["latin"] });
+import { Toaster } from "react-hot-toast";
 
 const metaData = {
   title: "NextGen Store",
@@ -19,6 +18,7 @@ export default function Layout({ children }) {
           <div className="gradient" />
         </div>
         <main className="app">
+          <Toaster position="top-center" reverseOrder={false} />
           <Nav />
           {children}
         </main>

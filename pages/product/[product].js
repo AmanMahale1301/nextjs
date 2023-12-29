@@ -39,11 +39,11 @@ const SingleProduct = () => {
 
   const handleAddToCart = async () => {
     try {
-      let cartId = sessionStorage.getItem("cartId");
+      let cartId = localStorage.getItem("cartId");
       console.log(cartId);
       if (!cartId) {
         cartId = await createCart();
-        sessionStorage.setItem("cartId", cartId);
+        localStorage.setItem("cartId", cartId);
       }
       const variantId = variant;
       console.log(variantId);
@@ -94,7 +94,6 @@ const SingleProduct = () => {
       console.log(matchingVariant.node.id);
     }
   };
-  console.log(variant);
   return (
     <div className="">
       {product && (
@@ -211,12 +210,14 @@ const SingleProduct = () => {
                   );
                 })}
               </div>
-              <button
-                className="flex-center h-12 mt-5 text-white justify-center w-full rounded-lg bg-slate-400 "
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </button>
+              <div className="flex-center">
+                <button
+                  className=" h-12 mt-5 text-white flex-center px-10 py-4 max-[1138px]:w-full w-[30vw] rounded-lg bg-slate-400 "
+                  onClick={handleAddToCart}
+                >
+                  Add to Cart
+                </button>
+              </div>
             </div>
             <CartDrawer isDrawerOpen={open} setIsDrawerOpen={setOpen} />
           </div>

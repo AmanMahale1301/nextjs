@@ -122,7 +122,7 @@ export const addToCart = async (cartId, variantId, quantity) => {
   try {
     const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
     const shop = process.env.NEXT_PUBLIC_SHOPIFY_STORE;
-
+    console.log(variantId);
     const query = gql`mutation AddToCart {
       cartLinesAdd(
         cartId: "${cartId}"
@@ -175,7 +175,7 @@ export const addToCart = async (cartId, variantId, quantity) => {
         "Content-Type": "application/json",
         "X-Shopify-Storefront-Access-Token": token,
       },
-      body: JSON.stringify({ query: query, variables }),
+      body: JSON.stringify({ query }),
     });
 
     const data = await response.json();

@@ -1,36 +1,10 @@
-import React, { useEffect, useState } from "react";
-import logo from "../../public/images/logo.svg";
+import { createCustomer, loginCustomer } from "@/utility/customer";
 import Link from "next/link";
-import cartLogo from "../../utils/cart.gif";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import CartDrawer from "./CartDrawer";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import countryCode from "../../utility/countryCode.json";
-import {
-  createCustomer,
-  fetchCustomer,
-  loginCustomer,
-  recoverCustomer,
-} from "@/utility/customer";
-import { createCart } from "@/utility/cart";
-import { signIn } from "next-auth/react";
 
-const Nav = () => {
-  const [toggleDropdown, setToggleDropdown] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState({
-    name: "India",
-    flag: "🇮🇳",
-    code: "IN",
-    dial_code: "+91",
-  });
-  const router = useRouter();
-  const [data, setData] = useState([]);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [isSignIn, setIsSignIn] = useState("signIn");
-  const [showPassword, setShowPassword] = useState(false);
+const AuthModal = ({ isDrawerOpen, setIsDrawerOpen }) => {
+  const [isSignIn, setIsSignIn] = useState(true);
   const [user, setUser] = useState({
     acceptsMarketing: true,
     email: "",
@@ -43,57 +17,9 @@ const Nav = () => {
     email: "",
     password: "",
   });
-  const [recoverUser, setRecoverUser] = useState({
-    email: "",
-  });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const storedAccessToken = localStorage.getItem("accessToken");
-      const cartId = localStorage.getItem("cartId");
-      console.log(cartId);
-      if (!cartId) {
-        const cart = await createCart();
-        const newCartId = cart;
-        localStorage.setItem("cartId", newCartId);
-      }
-      if (storedAccessToken) {
-        try {
-          const response = await fetchCustomer(storedAccessToken);
-          console.log(response);
-          setData(response);
-          localStorage.setItem("userEmail", response?.email);
-          setLoggedIn(true);
-        } catch (error) {
-          toast.error(error.message);
-        }
-      }
-    };
-    fetchUser();
-  }, []);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignIn = async () => {
-    try {
-      const loggedUser = { ...loginUser };
-
-      const response = await loginCustomer(loggedUser);
-      localStorage.setItem("userEmail", loginUser.email);
-      localStorage.setItem("accessToken", response);
-      const userData = await fetchCustomer(response);
-      setData(userData);
-      setLoggedIn(true);
-      setModalOpen(false);
-      toast.success("User Signed In Successfully");
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
-  const handleSignOut = async () => {
-    setToggleDropdown(false);
-    setLoggedIn(false);
-    localStorage.removeItem("accessToken");
-  };
   const toggleForm = () => {
     setIsSignIn(!isSignIn);
   };
@@ -106,179 +32,54 @@ const Nav = () => {
     const { name, value } = e.target;
     setLoginUser((user) => ({ ...user, [name]: value }));
   };
-  const handleRecoverInputChange = (e) => {
-    const { name, value } = e.target;
-    setRecoverUser((user) => ({ ...user, [name]: value }));
-  };
+  console.log(loginUser);
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
-
-  const handleSignUp = async () => {
+  const handleSignIn = async () => {
     try {
-      const newUser = { ...user };
-      if (selectedCountry) {
-        const dialCode = selectedCountry.dial_code;
-        newUser.phone = `${dialCode}${newUser.phone}`;
-      }
-      const response = await createCustomer(newUser);
-      localStorage.setItem("userEmail", response.email);
-      const loginData = { email: response.email, password: newUser.password };
-      const login = await loginCustomer(loginData);
-      const customer = await fetchCustomer(login);
-      setData(customer);
-      setLoggedIn(true);
-      setModalOpen(false);
+      const loggedUser = { ...loginUser };
+      const response = await loginCustomer(loggedUser);
+      localStorage.setItem("accessToken", response);
       toast.success("User Signed In Sucessfully");
     } catch (error) {
       toast.error(error);
-      console.log(selectedCountry);
     }
   };
-  const handleCountryChange = (e) => {
-    const selectedCountryCode = e.target.value;
-    const country = countryCode.find(
-      (c) => c.dial_code === selectedCountryCode
-    );
-    setSelectedCountry(country);
-  };
-
-  useEffect(() => {
-    if (selectedCountry) {
-      const dialCode = selectedCountry.dial_code;
-      console.log(dialCode);
-    }
-  }, [selectedCountry]);
-  const handleRecover = async () => {
+  const handleSignUp = async () => {
     try {
-      const userEmail = recoverUser.email;
-      const response = await recoverCustomer(userEmail);
-      console.log(response);
-      toast.success("Please check your registered email for Reset Url ");
-      setIsSignIn("signIn");
+      const newUser = { ...user };
+      const response = await createCustomer(newUser);
+      const loginData = { email: response.email, password: newUser.password };
+      const login = await loginCustomer(loginData);
+      console.log(login);
+
+      toast.success("User Signed In Sucessfully");
     } catch (error) {
       toast.error(error);
     }
-    setIsSignIn("signIn");
   };
-  function titleFormatted(inputTitle) {
-    return inputTitle.replace(/([A-Z])/g, " $1").trim();
-  }
+
   return (
     <>
-      <nav className="flex-between w-full mb-16 pt-3">
-        <Link href="/" className="flex gap-2 flex-center">
-          <Image
-            src={logo}
-            alt="Nextgen Logo"
-            width={30}
-            height={30}
-            className="object-contain"
-          />
-          <p className="logo_text">NextGen Store</p>
-        </Link>
-        <div className="sm:flex hidden ">
-          {loggedIn ? (
-            <div className="flex gap-3 md:gap-5">
-              <Link href="/products" className="black_btn">
-                All Products
-              </Link>
-              <button
-                type="button"
-                onClick={() => handleSignOut()}
-                className="outline_btn"
-              >
-                Sign Out
-              </button>
-              <div>
-                <button onClick={() => setOpen(true)}>
-                  <Image src={cartLogo} width={35} height={35} alt="Cart" />
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() => setModalOpen(true)}
-                className="black_btn"
-              >
-                Sign In
-              </button>
-            </>
-          )}
-        </div>
-
-        <div className="sm:hidden flex relative">
-          {loggedIn ? (
-            <div className="flex">
-              <button onClick={() => setToggleDropdown((prev) => !prev)}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="16"
-                  width="14"
-                  viewBox="0 0 448 512"
-                >
-                  <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" />
-                </svg>
-              </button>
-
-              {toggleDropdown && (
-                <div className="dropdown">
-                  <Link
-                    href="/products"
-                    className="dropdown_link"
-                    onClick={() => setToggleDropdown(false)}
-                  >
-                    All Products
-                  </Link>
-                  <button
-                    onClick={() => setOpen(true)}
-                    className="dropdown_link"
-                  >
-                    Cart
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSignOut}
-                    className="mt-2 w-full black_btn"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() => setModalOpen(true)}
-                className="black_btn"
-              >
-                Sign In
-              </button>
-            </>
-          )}
-        </div>
-      </nav>
-      {modalOpen ? (
+      {isDrawerOpen ? (
         <div className="fixed top-0 left-0 w-full h-full flex flex-wrap items-center justify-center">
           <div className="bg-black bg-opacity-50 w-full h-full fixed top-0 left-0"></div>
           <div className="bg-white shadow-lg p-4 rounded relative z-10 m-4">
             <div className="flex justify-between items-center pt-3 px-5">
-              <p className="font-semibold text-2xl capitalize">
-                {titleFormatted(isSignIn)}
+              <p className="font-semibold text-2xl ">
+                {isSignIn ? "Sign In" : "Sign Up"}
               </p>
               <p
-                className="font-medium text-gray-400 text-2xl cursor-pointer"
-                onClick={() => setModalOpen(false)}
+                className="font-medium text-gray-400 text-2xl"
+                onClick={() => setIsDrawerOpen(false)}
               >
                 X
               </p>
             </div>
 
-            {isSignIn === "signIn" ? (
+            {isSignIn ? (
               <form className=" rounded px-8 pt-6 pb-8 w-[40vw]">
                 <div className="mb-4 w-full">
                   <label
@@ -348,12 +149,12 @@ const Nav = () => {
                   >
                     Sign In
                   </button>
-                  <button
+                  <Link
                     className=" flex items-center text-center font-medium text-sm text-black hover:text-gray-600"
-                    onClick={() => setIsSignIn("recover")}
+                    href="#"
                   >
                     Forgot Password?
-                  </button>
+                  </Link>
                 </div>
                 <div className="my-2 w-full text-center text-lg">
                   If user is not signed in{" "}
@@ -366,7 +167,7 @@ const Nav = () => {
                   </a>
                 </div>
               </form>
-            ) : isSignIn === "signUp" ? (
+            ) : (
               <form className="w-[60vw] mt-4 p-4">
                 <div className="flex flex-wrap -mx-3 mb-6">
                   <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
@@ -467,102 +268,47 @@ const Nav = () => {
                   </div>
                 </div>
                 <div className="flex flex-wrap -mx-3 mb-2">
-                  <div className="w-full md:w-2/4 px-3 mb-6 md:mb-0">
+                  <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                     <label
                       className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                       htmlFor="grid-phone"
                     >
                       Phone
                     </label>
-                    <div className="flex">
-                      <select
-                        id="grid-phone"
-                        className="appearance-none block max-w-full text-gray-700 border border-gray-200 rounded-tl py-3 px-4 leading-tight focus:outline-none bottom-10 focus:bg-white focus:border-gray-500"
-                        onChange={handleCountryChange}
-                        value={selectedCountry ? selectedCountry.dial_code : ""}
-                      >
-                        <option value="">Select Country</option>
-                        {countryCode.map((country) => (
-                          <option
-                            key={country.code}
-                            value={country.dial_code}
-                            className="px-4"
-                          >
-                            {country.code} ({country.dial_code})
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        className="appearance-none block w-full  text-gray-700 border border-gray-200 rounded-tr rounded-bl py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                        id="grid-phone"
-                        type="text"
-                        name="phone"
-                        value={user.phone}
-                        onChange={handleInputChange}
-                        placeholder="Phone No."
-                        maxLength="10"
-                      />
-                    </div>
+                    <input
+                      className="appearance-none block w-full text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      id="grid-phone"
+                      type="text"
+                      name="phone"
+                      value={user.phone}
+                      onChange={handleInputChange}
+                      placeholder="Phone No."
+                    />
                   </div>
                 </div>
                 <div className="flex items-center justify-between mt-5">
                   <button
-                    className="bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                     onClick={handleSignUp}
                   >
                     Sign Up
                   </button>
-                  <button
+                  <Link
                     className="flex items-center text-center font-bold text-sm text-black hover:text-gray-600"
-                    onClick={() => setIsSignIn("signIn")}
+                    href="#"
+                    onClick={toggleForm}
                   >
                     Already have an account? Sign In
-                  </button>
+                  </Link>
                 </div>
               </form>
-            ) : isSignIn === "recover" ? (
-              <form className=" rounded px-8 pt-6 pb-8 w-[40vw]">
-                <div className="mb-4 w-full">
-                  <label
-                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-email"
-                  >
-                    Email
-                  </label>
-                  <input
-                    className="appearance-none block w-full  text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                    id="grid-email"
-                    type="email"
-                    name="email"
-                    value={recoverUser.email}
-                    onChange={handleRecoverInputChange}
-                    placeholder="Email"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <button
-                    className="bg-zinc-900  hover:bg-zinc-800 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    type="button"
-                    onClick={handleRecover}
-                  >
-                    Submit
-                  </button>
-                  <button
-                    className=" flex items-center text-center font-medium text-sm text-black hover:text-gray-600"
-                    onClick={() => setIsSignIn("recover")}
-                  >
-                    Sign Up if you do not have an account
-                  </button>
-                </div>
-              </form>
-            ) : null}
+            )}
           </div>
         </div>
       ) : null}
-      <CartDrawer isDrawerOpen={open} setIsDrawerOpen={setOpen} />
     </>
   );
 };
 
-export default Nav;
+export default AuthModal;

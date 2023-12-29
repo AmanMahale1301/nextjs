@@ -69,19 +69,19 @@ const Collection = (category) => {
   console.log(products, "products");
   return (
     <>
-      <div className="flex justify-start w-full mt-5">
+      <div className="flex justify-center w-full mt-5">
         <h1
-          className="font-bold ms-5 text-xl mb-2 "
+          className="font-bold ms-5 text-2xl text-center mb-2 "
           onClick={handleCategoryClick}
           style={{ cursor: "pointer" }}
         >
           {category.category}{" "}
         </h1>
       </div>
-      <div className="container my-5 flex w-full overflow-x-auto">
+      <div className="container my-5 flex w-full justify-center overflow-x-auto ">
         {products.map((product) => (
           <div
-            className="max-w-sm rounded my-4 mx-5 w-64"
+            className="max-w-sm rounded my-4 mx-5 w-64 bg-white"
             key={product.node.id}
             style={{ border: " 1px solid black" }}
             onClick={() => handleProductClick(product.node.id)}
@@ -93,7 +93,7 @@ const Collection = (category) => {
               width={100}
               height={60}
             />
-            <div className="px-6 py-4">
+            <div className="px-6 py-4 ">
               <div className="font-bold text-xl mb-2">{product.node.title}</div>
               <p className="text-gray-700 text-base truncate">
                 {product.node.description}
